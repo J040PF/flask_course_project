@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+import urllib.request, json
 
 app = Flask(__name__)
 frutas = ["banana", "maça", "pera"]
@@ -21,6 +22,15 @@ def sobre():
 
     return render_template('lista.html', registros = registros)
 
+
+@app.route('/filmes')
+def filmes():
+    url = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1210749afa33db66c07848d986de0fa4'
+    resposta = urllib.request.urlopen(url)
+    dados = json.loads(resposta.read())
+
+    
+    return render_template('filmes.html', dados= dados['results'])
 
 
 
