@@ -1,9 +1,29 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect, flash
+from flask_sqlalchemy import SQLAlchemy
 import urllib.request, json
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///cursos.db"
+app.app_context().push()
+
+db = SQLAlchemy(app)
+
 frutas = ["banana", "maça", "pera"]
 registros = [{"nome":"joao", "nota":10}, {"nome":"maria", "nota":8}]
+
+
+class cursos(db.Model):
+
+    id = db.Column(db.Integer,primary_key=True)
+    nome = db.Column(db.String(50))
+    descricao = db.Column(db.String(100))
+    ch = db.Column(db.Integer)
+
+    def __init__(self, nome, descricao, ch):
+        self.nome = nome
+        self.descricao = descricao
+        self.ch = ch
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -33,6 +53,27 @@ def filmes():
     return render_template('filmes.html', dados= dados['results'])
 
 
+@app.route('/curso')
+def curso():
+    return render_template('cursos.html', cursos = cursos.query.all())
+
+
+@app.route('/adicionar-novo-curso', methods=["GET","POST"])
+def cria_curso():
+    nome = request.form.get('nome')
+    descricao = request.form.get('descricao')
+    ch = request.form.get('carga-horaria')
+
+    if request.method == 'POST':
+        curso = cursos(nome, descricao, ch)
+        db.session.add(curso)
+        db.session.commit()
+        return redirect(url_for('curso'))
+
+    return render_template('cria-curso.html')
+
+
 
 if __name__ == "__main__":
+    db.create_all()
     app.run(debug=True)
