@@ -15,17 +15,20 @@
                 <th scope="col">Nome</th>
                 <th scope="col">descriçao</th>
                 <th scope="col">Carga Horaria</th>
+                <th scope="col"> </th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
                 {%for curso in cursos%}
                     <tr>
-                    <th scope="row">{{curso.id}}</th>
-                    <td>{{curso.nome}}</td>
-                    <td>{{curso.descricao}}</td>
-                    <td>{{curso.ch}}</td>
+                      <th scope="row">{{curso.id}}</th>
+                      <td>{{curso.nome}}</td>
+                      <td>{{curso.descricao}}</td>
+                      <td>{{curso.ch}}</td>
+                      <td><a href="{{curso.id}}/atualiza_curso" class="btn btn-dark">editar</a></td>
+                      <td><a href="{{curso.id}}/remover_curso" class="btn btn-danger" onclick="return confirm('deseja excluir o item ??')">deletar</a></td>
                     </tr>
-                    <tr>
 
 
                 {% endfor %}

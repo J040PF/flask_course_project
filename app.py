@@ -12,6 +12,7 @@ frutas = ["banana", "maça", "pera"]
 registros = [{"nome":"joao", "nota":10}, {"nome":"maria", "nota":8}]
 
 
+# ---------- criar banco de dados
 class cursos(db.Model):
 
     id = db.Column(db.Integer,primary_key=True)
@@ -23,7 +24,7 @@ class cursos(db.Model):
         self.nome = nome
         self.descricao = descricao
         self.ch = ch
-
+# ---------- Fim criar banco de dados
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -53,6 +54,8 @@ def filmes():
     return render_template('filmes.html', dados= dados['results'])
 
 
+
+#  -------------------- criar, atualizar e deletar o banco de dados
 @app.route('/curso')
 def curso():
     return render_template('cursos.html', cursos = cursos.query.all())
@@ -71,6 +74,34 @@ def cria_curso():
         return redirect(url_for('curso'))
 
     return render_template('cria-curso.html')
+
+
+@app.route('/<int:id>/atualiza_curso', methods = ['GET','POST'])
+def atualiza_curso(id):
+    curso = cursos.query.filter_by(id=id).first()
+
+    if request.method == 'POST':
+        nome = request.form['nome']
+        descricao = request.form['descricao']
+        ch = request.form['carga-horaria']
+
+        cursos.query.filter_by(id=id).update({'nome':nome, 'descricao':descricao, 'ch':ch})
+        db.session.commit()
+
+        return redirect(url_for('curso'))
+
+
+    return render_template('atualiza_curso.html', curso = curso)
+
+@app.route('/<int:id>/remover_curso')
+def remover_curso(id):
+    curso = cursos.query.filter_by(id=id).first()
+    db.session.delete(curso)
+    db.session.commit()
+    return redirect(url_for('curso'))
+
+
+#  -------------------- Fim criar, atualizar e deletar o banco de dados
 
 
 
